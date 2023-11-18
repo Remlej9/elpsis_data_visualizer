@@ -36,3 +36,13 @@
     transform: rotate(360deg);
   }
 }
+
+.mainDiv {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.canvas {
+    flex: 1;
+}
