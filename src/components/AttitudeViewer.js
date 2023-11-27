@@ -5,6 +5,7 @@ import {OrbitControls} from "@react-three/drei";
 import XYZArrows from "./XYZArrows";
 import RotatingObject from "./RotatingObject";
 import rotationData from "../data/rotationData";
+import {Vector3} from "three";
 
 extend({ OrbitControls });
 
@@ -43,19 +44,30 @@ const AttitudeViewer = () => {
                 <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} decay={0} intensity={Math.PI} />
                 <pointLight position={[-10, -10, -10]} decay={0} intensity={Math.PI} />
                 <RotatingObject rotationValues={rotationData[currentFrame]} />
-                <XYZArrows />
+                {/*<XYZArrows />*/}
                 <OrbitControls />
+                {/*<arrowHelper args={[new Vector3(0, -1, 0), new Vector3(0,
+                 0, 0), 7, 'red']} />*/}
             </Canvas>
-            <div>
-                <button onClick={handlePlayClick}>{isPlaying ? 'Pause' : 'Play'}</button>
+            <div className="controls">
+                <button
+                    className="playButton"
+                    onClick={handlePlayClick}>{isPlaying ? 'Pause' : 'Play'}
+                </button>
 
-                <input
-                    type="range"
-                    min="0"
-                    max={rotationData.length - 1}
-                    value={currentFrame}
-                    onChange={handleSliderChange}
-                />
+                <span className="frameNumber">Tidpunkt: {currentFrame/10}</span>
+
+                <div className="timeline">
+
+                    <input
+                        type="range"
+                        min="0"
+                        max={rotationData.length - 1}
+                        value={currentFrame}
+                        onChange={handleSliderChange}
+                    />
+
+                </div>
             </div>
         </div>
     );

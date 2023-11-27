@@ -13,11 +13,11 @@ const RotatingObject = ({ rotationValues }) => {
         <group ref={groupRef}>
             <mesh position={[0, 2, 0]}>
                 <coneGeometry args={[1, 2, 32]} attach="geometry" />
-                <meshStandardMaterial color="hotpink" />
+                <meshStandardMaterial color="#aa0000" />
             </mesh>
             <mesh position={[0, -1.5, 0]}>
                 <cylinderGeometry args={[0.9, 0.9, 5, 32]} attach="geometry" />
-                <meshStandardMaterial color="blue" />
+                <meshStandardMaterial color="white" />
             </mesh>
             <mesh position={[0, -3.9, 0]}>
                 <boxGeometry args={[3, 0.1, 0.1, 32]} attach="geometry" />
