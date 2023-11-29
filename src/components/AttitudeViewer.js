@@ -2,41 +2,62 @@ import React, { useState, useEffect } from 'react';
 import {Canvas, extend } from 'react-three-fiber';
 import '../css/AttitudeViewer.css';
 import {OrbitControls} from "@react-three/drei";
-import XYZArrows from "./XYZArrows";
 import RotatingObject from "./RotatingObject";
 import rotationData from "../data/rotationData";
-import {Vector3} from "three";
 
 extend({ OrbitControls });
 
+// This function converts a frame number to a time string
+function frameToTime(frame) {
+    let seconds = frame / 10;
+
+    let minutes = Math.floor(seconds / 60);
+
+    let milliseconds = frame % 10 * 100;
+
+    seconds = Math.floor(seconds % 60);
+
+    // Pad the minutes, seconds, and milliseconds with leading zeros if needed
+    // The format becomes MM:SS:MMM
+    return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}:${milliseconds.toString().padStart(3, '0')}`;
+}
+
 const AttitudeViewer = () => {
 
+    // The current frame and whether the animation is playing or not
+    // is stored in the state
     const [currentFrame, setCurrentFrame] = useState(0);
     const [isPlaying, setIsPlaying] = useState(false);
 
+    // This effect is called whenever the current frame or the isPlaying state changes
     useEffect(() => {
         let animationTimeout;
 
+        // This function is called recursively to play the animation
         const playAnimation = () => {
             setCurrentFrame((prevFrame) => (prevFrame + 1) % rotationData.length);
-            animationTimeout = setTimeout(playAnimation, 100); // Set a delay of 1000 milliseconds (1 second)
+            animationTimeout = setTimeout(playAnimation, 100); // Set a delay of 100 milliseconds (1 second)
         };
 
         if (isPlaying) {
             animationTimeout = setTimeout(playAnimation, 100); // Start the animation with a delay
         }
 
+        // This function is called when the component is unmounted
         return () => clearTimeout(animationTimeout);
     }, [isPlaying, rotationData]);
 
+    // This function is called when the play/pause button is clicked
     const handlePlayClick = () => {
         setIsPlaying((prevIsPlaying) => !prevIsPlaying);
     };
 
+    // This function is called when the slider is moved
     const handleSliderChange = (event) => {
         setCurrentFrame(parseInt(event.target.value, 10));
     };
 
+    // The main component renders the canvas, the play/pause button, the slider, and the frame number
     return (
         <div className="mainDiv">
             <Canvas className="canvas" camera={{ position: [0, 0, 10] }}>
@@ -49,13 +70,14 @@ const AttitudeViewer = () => {
                 {/*<arrowHelper args={[new Vector3(0, -1, 0), new Vector3(0,
                  0, 0), 7, 'red']} />*/}
             </Canvas>
+
             <div className="controls">
                 <button
                     className="playButton"
                     onClick={handlePlayClick}>{isPlaying ? 'Pause' : 'Play'}
                 </button>
 
-                <span className="frameNumber">Tidpunkt: {currentFrame/10}</span>
+                <span className="frameNumber">T- {frameToTime(currentFrame)}</span>
 
                 <div className="timeline">
 
@@ -68,7 +90,19 @@ const AttitudeViewer = () => {
                     />
 
                 </div>
+
             </div>
+
+            <div className="RotationValues">
+
+            <p>Rotation i xyz</p>
+            <p>X: {rotationData[currentFrame][0] * (180/Math.PI)}°</p>
+            <p>Y: {rotationData[currentFrame][1] * (180/Math.PI)}°</p>
+            <p>Z: {rotationData[currentFrame][2] * (180/Math.PI)}°</p>
+                <p>Frame : {currentFrame}</p>
+
+            </div>
+
         </div>
     );
 };

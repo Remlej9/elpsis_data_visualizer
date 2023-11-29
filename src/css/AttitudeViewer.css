@@ -45,3 +45,15 @@ input {
     width: 70%;
     color: white;
 }
+
+.RotationValues {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+}
+
+.RotationValues p {
+    margin: 0;
+    padding: 0;
+    color: white;
+}
