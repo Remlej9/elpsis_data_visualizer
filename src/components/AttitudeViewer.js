@@ -4,6 +4,7 @@ import '../css/AttitudeViewer.css';
 import {OrbitControls} from "@react-three/drei";
 import RotatingObject from "./RotatingObject";
 import rotationData from "../data/rotationData";
+import GraphPopup from "./GraphPopup";
 
 extend({ OrbitControls });
 
@@ -28,6 +29,7 @@ const AttitudeViewer = () => {
     // is stored in the state
     const [currentFrame, setCurrentFrame] = useState(0);
     const [isPlaying, setIsPlaying] = useState(false);
+    const [showGraph, setShowGraph] = useState(false);
 
     // This effect is called whenever the current frame or the isPlaying state changes
     useEffect(() => {
@@ -55,6 +57,14 @@ const AttitudeViewer = () => {
     // This function is called when the slider is moved
     const handleSliderChange = (event) => {
         setCurrentFrame(parseInt(event.target.value, 10));
+    };
+
+    const handleGraphButtonClick = () => {
+        setShowGraph(true);
+    };
+
+    const handleCloseGraph = () => {
+        setShowGraph(false);
     };
 
     // The main component renders the canvas, the play/pause button, the slider, and the frame number
@@ -91,6 +101,10 @@ const AttitudeViewer = () => {
 
                 </div>
 
+                <button className="graphButton" onClick={handleGraphButtonClick}>
+                    Show Graph
+                </button>
+
             </div>
 
             <div className="RotationValues">
@@ -103,6 +117,9 @@ const AttitudeViewer = () => {
 
             </div>
 
+            {showGraph && (
+                <GraphPopup frame={currentFrame} onClose={handleCloseGraph} />
+            )}
         </div>
     );
 };

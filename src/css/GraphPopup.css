@@ -1,0 +1,18 @@
+.graph-popup {
+    position: absolute;
+    padding: 10px 10px 10px 25px;
+    background-color: rgba(0, 0, 0, 0.5);
+    border: 2px solid #ddd;
+    z-index: 1000; /* Ensure it appears above other elements */
+    border-radius: 20px;
+}
+
+.close-button {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    cursor: pointer;
+    background-color: #ddd;
+    padding: 5px;
+    z-index: 1100;
+}
