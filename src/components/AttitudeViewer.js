@@ -5,6 +5,7 @@ import {OrbitControls} from "@react-three/drei";
 import RotatingObject from "./RotatingObject";
 import rotationData from "../data/rotationData";
 import GraphPopup from "./GraphPopup";
+import FileInput from "./FileInput";
 
 extend({ OrbitControls });
 
@@ -104,6 +105,8 @@ const AttitudeViewer = () => {
                 <button className="graphButton" onClick={handleGraphButtonClick}>
                     Show Graph
                 </button>
+
+                <FileInput />
 
             </div>
 
