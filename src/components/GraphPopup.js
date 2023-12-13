@@ -9,18 +9,25 @@ const data = accelerationdata.map((value, index) => ({
     acceleration: value.value
 }));
 
-const GraphPopup = ({ frame, onClose }) => {
+const GraphPopup = ({ type, frame }) => {
     const slice = data.slice(0, frame + 1);
 
     return (
         <Draggable>
             {/* Wrap your content with Draggable component */}
             <div className="graph-popup">
-                <div className="close-button" onClick={onClose}>
-                    Close
+                {/*
+                    <div className="close-button" onClick={onClose}>
+                        Close
+                    </div>
+                */}
+
+                <div className="graph-title">
+                    {type}
                 </div>
-                <LineChart width={400} height={400} data={slice}>
-                    <Line type="monotone" dataKey="acceleration" stroke="#8884d8" strokeWidth={3} />
+
+                <LineChart width={250} height={250} data={slice}>
+                    <Line type="monotone" dataKey={type} stroke="#8884d8" strokeWidth={3} />
                     <CartesianGrid stroke="#ccc" />
                     <XAxis dataKey="time" domain={[0, data.length]}/>
                     <YAxis domain={[0, 1]}/>

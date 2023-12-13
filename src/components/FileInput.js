@@ -2,9 +2,11 @@ import React from "react";
 
 const FileInput = () => {
     const [decodedData, setDecodedData] = React.useState("");
+    const [file, setFile] = React.useState(null);
 
     const handleFileChange = (event) => {
         const file = event.target.files[0];
+        setFile(file);
         const reader = new FileReader();
         reader.onload = (event) => {
             const binaryData = new Uint8Array(event.target.result);
@@ -66,9 +68,12 @@ const FileInput = () => {
     };
 
     return (
-        <div>
-            <input type="file" onChange={handleFileChange}/>
-            <div>{decodedData}</div>
+        <div className="file-input">
+                <label className={file ? "file-input-button active" : "file-input-button"}>
+                    <input className="browse" type="file" onChange={handleFileChange}/>
+                    <div className="file-input-text">{file ? file.name : "Load Datafile"}</div>
+                </label>
+            {/*<div>{decodedData}</div>*/}
         </div>
     );
 };

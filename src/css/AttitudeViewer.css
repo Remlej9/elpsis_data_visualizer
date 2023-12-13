@@ -57,3 +57,46 @@ input {
     padding: 0;
     color: white;
 }
+
+.graphButtons {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+.graphButtons button {
+    margin: 5px 0;
+    padding: 5px 10px;
+    background-color: rgba(0, 0, 0, 0);
+    border-radius: 10px;
+    color: red;
+    border: 1px solid red;
+}
+
+.active {
+    color: green !important;
+    border: 1px solid green !important;
+}
+
+.file-input {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    z-index: 1000;
+}
+
+.file-input-button {
+    border: 1px solid red;
+    display: inline-block;
+    padding: 6px 12px;
+    cursor: pointer;
+    background-color: rgba(0, 0, 0, 0);
+    border-radius: 10px;
+    color: red;
+}
+
+input[type="file"] {
+    display: none;
+}

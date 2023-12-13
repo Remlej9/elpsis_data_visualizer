@@ -30,10 +30,15 @@ const AttitudeViewer = () => {
     // is stored in the state
     const [currentFrame, setCurrentFrame] = useState(0);
     const [isPlaying, setIsPlaying] = useState(false);
-    const [showGraph, setShowGraph] = useState(false);
+    const [graphStates, setGraphStates] = useState({
+        accelerationGraph: false,
+        velocityGraph: false,
+        altitudeGraph: false,
+    });
 
     // This effect is called whenever the current frame or the isPlaying state changes
     useEffect(() => {
+        console.log(graphStates);
         let animationTimeout;
 
         // This function is called recursively to play the animation
@@ -48,7 +53,7 @@ const AttitudeViewer = () => {
 
         // This function is called when the component is unmounted
         return () => clearTimeout(animationTimeout);
-    }, [isPlaying, rotationData]);
+    }, [isPlaying, rotationData, graphStates]);
 
     // This function is called when the play/pause button is clicked
     const handlePlayClick = () => {
@@ -60,13 +65,16 @@ const AttitudeViewer = () => {
         setCurrentFrame(parseInt(event.target.value, 10));
     };
 
-    const handleGraphButtonClick = () => {
-        setShowGraph(true);
+    const handleGraphButtonClick = (type) => {
+        setGraphStates((prev) => {
+            return {...prev, [`${type}Graph`]: true};
+        });
     };
 
-    const handleCloseGraph = () => {
-        setShowGraph(false);
+    const handleCloseGraph = (type) => {
+        setGraphStates((prev) => ({ ...prev, [`${type}Graph`]: false }));
     };
+
 
     // The main component renders the canvas, the play/pause button, the slider, and the frame number
     return (
@@ -91,7 +99,6 @@ const AttitudeViewer = () => {
                 <span className="frameNumber">T- {frameToTime(currentFrame)}</span>
 
                 <div className="timeline">
-
                     <input
                         type="range"
                         min="0"
@@ -99,12 +106,7 @@ const AttitudeViewer = () => {
                         value={currentFrame}
                         onChange={handleSliderChange}
                     />
-
                 </div>
-
-                <button className="graphButton" onClick={handleGraphButtonClick}>
-                    Show Graph
-                </button>
 
                 <FileInput />
 
@@ -120,9 +122,28 @@ const AttitudeViewer = () => {
 
             </div>
 
-            {showGraph && (
-                <GraphPopup frame={currentFrame} onClose={handleCloseGraph} />
+            <div className="graphButtons">
+                <button className={graphStates.accelerationGraph ? "graphButton active" : "graphButton"} onClick={graphStates.accelerationGraph ? () => handleCloseGraph("acceleration") : () => handleGraphButtonClick("acceleration")}>
+                    Acceleration
+                </button>
+                <button className={graphStates.velocityGraph ? "graphButton active" : "graphButton"} onClick={graphStates.velocityGraph ? () => handleCloseGraph("velocity") : () => handleGraphButtonClick("velocity")}>
+                    Velocity
+                </button>
+                <button className={graphStates.altitudeGraph ? "graphButton active" : "graphButton"} onClick={graphStates.altitudeGraph ? () => handleCloseGraph("altitude") : () => handleGraphButtonClick("altitude")}>
+                    Altitude
+                </button>
+            </div>
+
+            {graphStates.accelerationGraph && (
+                <GraphPopup type="acceleration" frame={currentFrame} onClose={() => handleCloseGraph("acceleration")} />
             )}
+            {graphStates.velocityGraph && (
+                <GraphPopup type="velocity" frame={currentFrame} onClose={() => handleCloseGraph("velocity")} />
+            )}
+            {graphStates.altitudeGraph && (
+                <GraphPopup type="altitude" frame={currentFrame} onClose={() => handleCloseGraph("altitude")} />
+            )}
+
         </div>
     );
 };
