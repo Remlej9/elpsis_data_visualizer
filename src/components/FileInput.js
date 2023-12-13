@@ -1,31 +1,67 @@
 import React from "react";
 
-// The datatype in the file is a bytepointer generated in C++.
-// This function converts the bytepointer to a string.
-// Although the string is not human readable, this
-// is because the data is in binary format.
-// We can make this string human readable by converting
-// it to a base64 string.
-const bytePointerToString = (bytePointer) => {
-    let string = "";
-    for (let i = 0; i < bytePointer.size(); i++) {
-        string += String.fromCharCode(bytePointer.get(i));
-    }
-    return string;
-}
-
 const FileInput = () => {
     const [decodedData, setDecodedData] = React.useState("");
 
-    // This function is called when a file is selected
     const handleFileChange = (event) => {
         const file = event.target.files[0];
         const reader = new FileReader();
         reader.onload = (event) => {
-            const string = bytePointerToString(event.target.result);
-            const base64String = btoa(string);
-            setDecodedData(base64String);
+            const binaryData = new Uint8Array(event.target.result);
+
+            // Assuming each struct has a fixed size of 40 bytes (adjust according to your actual struct size)
+            const structSize = 40;
+            const numStructs = binaryData.length / structSize;
+            const telemetryData = [];
+
+            for (let i = 0; i < numStructs; i++) {
+                const offset = i * structSize;
+                const acc = {
+                    x: new Float32Array(binaryData.slice(offset, offset + 4))[0],
+                    y: new Float32Array(binaryData.slice(offset + 4, offset + 8))[0],
+                    z: new Float32Array(binaryData.slice(offset + 8, offset + 12))[0],
+                };
+
+                const rot = {
+                    R: new Float32Array(binaryData.slice(offset + 12, offset + 16))[0],
+                    I: new Float32Array(binaryData.slice(offset + 16, offset + 20))[0],
+                    J: new Float32Array(binaryData.slice(offset + 20, offset + 24))[0],
+                    K: new Float32Array(binaryData.slice(offset + 24, offset + 28))[0],
+                };
+
+                const bnoReset = binaryData[offset + 28] !== 0;
+                const bnoMissed = binaryData[offset + 29];
+                const direction = new Int32Array(binaryData.slice(offset + 30, offset + 34))[0];
+                const alt = new Float32Array(binaryData.slice(offset + 34, offset + 38))[0];
+                const parachuteState = new Int32Array(binaryData.slice(offset + 38, offset + 42))[0];
+                const temp = new Float32Array(binaryData.slice(offset + 42, offset + 46))[0];
+                const pres = new Float32Array(binaryData.slice(offset + 46, offset + 50))[0];
+                const basePres = new Float32Array(binaryData.slice(offset + 50, offset + 54))[0];
+                const flightTime = new Int32Array(binaryData.slice(offset + 54, offset + 58))[0];
+                const time = new Int32Array(binaryData.slice(offset + 58, offset + 62))[0];
+
+                const telemetryStruct = {
+                    acc,
+                    rot,
+                    bnoReset,
+                    bnoMissed,
+                    direction,
+                    alt,
+                    parachuteState,
+                    temp,
+                    pres,
+                    basePres,
+                    flightTime,
+                    time,
+                };
+
+                telemetryData.push(telemetryStruct);
+            }
+
+            setDecodedData(JSON.stringify(telemetryData, null, 2));
+            console.log(JSON.stringify(telemetryData, null, 2));
         };
+
         reader.readAsArrayBuffer(file);
     };
 
@@ -34,7 +70,7 @@ const FileInput = () => {
             <input type="file" onChange={handleFileChange}/>
             <div>{decodedData}</div>
         </div>
-    )
-}
+    );
+};
 
 export default FileInput;
