@@ -29,7 +29,7 @@ const GraphPopup = ({ type, frame }) => {
                 <LineChart width={250} height={250} data={slice}>
                     <Line type="monotone" dataKey={type} stroke="#8884d8" strokeWidth={3} />
                     <CartesianGrid stroke="#ccc" />
-                    <XAxis dataKey="time" domain={[0, data.length]}/>
+                    <XAxis dataKey="time" domain={[0, slice.length]}/>
                     <YAxis domain={[0, 1]}/>
                     <Tooltip />
                 </LineChart>
