@@ -12,7 +12,7 @@ const RotatingObject = ({ rotationValues }) => {
 
     useFrame(() => {
         const [x, y, z] = rotationValues;
-        groupRef.current.rotation.set(x, y, z);
+        groupRef.current.rotation.set(y, x, z);
     });
 
     return (

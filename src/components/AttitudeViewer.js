@@ -35,6 +35,11 @@ const AttitudeViewer = () => {
         velocityGraph: false,
         altitudeGraph: false,
     });
+    const [rotationData, setRotationData] = useState([0, 0, 0]);
+
+    const handleFileRead = (data) => {
+        setRotationData(data);
+    }
 
     // This effect is called whenever the current frame or the isPlaying state changes
     useEffect(() => {
@@ -83,8 +88,7 @@ const AttitudeViewer = () => {
                 <ambientLight intensity={Math.PI / 2}/>
                 <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} decay={0} intensity={Math.PI} />
                 <pointLight position={[-10, -10, -10]} decay={0} intensity={Math.PI} />
-                <RotatingObject rotationValues={rotationData[currentFrame]} />
-                {/*<XYZArrows />*/}
+                <RotatingObject rotationValues={Array.isArray(rotationData[currentFrame]) ? rotationData[currentFrame] : [0, 0, 0]} />                {/*<XYZArrows />*/}
                 <OrbitControls />
                 {/*<arrowHelper args={[new Vector3(0, -1, 0), new Vector3(0,
                  0, 0), 7, 'red']} />*/}
@@ -108,7 +112,7 @@ const AttitudeViewer = () => {
                     />
                 </div>
 
-                <FileInput />
+                <FileInput onFileRead={handleFileRead}/>
 
             </div>
 
