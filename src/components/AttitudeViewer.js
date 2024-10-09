@@ -88,15 +88,11 @@ const AttitudeViewer = () => {
             </Canvas>
 
             <div className="RotationValues">
-
-            <p>Rotation i xyz</p>
-            <p>X: {rotationData[0] * (180/Math.PI)}°</p>
-            <p>Y: {rotationData[1] * (180/Math.PI)}°</p>
-            <p>Z: {rotationData[2] * (180/Math.PI)}°</p>
-                <p>Frame : {currentFrame}</p>
-
+                <p>X: {rotationData[0] * (180/Math.PI)}°</p>
+                <p>Y: {rotationData[1] * (180/Math.PI)}°</p>
+                <p>Z: {rotationData[2] * (180/Math.PI)}°</p>
             </div>
-
+            {/*
             <div className="graphButtons">
                 <button className={graphStates.accelerationGraph ? "graphButton active" : "graphButton"} onClick={graphStates.accelerationGraph ? () => handleCloseGraph("acceleration") : () => handleGraphButtonClick("acceleration")}>
                     Acceleration
@@ -108,6 +104,7 @@ const AttitudeViewer = () => {
                     Altitude
                 </button>
             </div>
+            */}
 
             {graphStates.accelerationGraph && (
                 <GraphPopup type="acceleration" frame={currentFrame} onClose={() => handleCloseGraph("acceleration")} />
