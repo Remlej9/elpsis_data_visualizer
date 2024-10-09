@@ -55,6 +55,7 @@ const AttitudeViewer = () => {
 
         ws.onclose = () => {
             console.log("Connection closed");
+            setConnection(false);
         };
 
         return () => {

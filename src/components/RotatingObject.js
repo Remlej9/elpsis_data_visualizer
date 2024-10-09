@@ -22,20 +22,28 @@ const RotatingObject = ({ rotationValues }) => {
             />*/}
             {/*fbx && <primitive object={fbx} />*/}
             <mesh position={[0, 2, 0]}>
-                <coneGeometry args={[1, 2, 32]} attach="geometry" />
-                <meshStandardMaterial color="#aa0000" />
+                <coneGeometry args={[0.9, 2, 32]} attach="geometry" />
+                <meshStandardMaterial color="gray" />
             </mesh>
             <mesh position={[0, -1.5, 0]}>
                 <cylinderGeometry args={[0.9, 0.9, 5, 32]} attach="geometry" />
                 <meshStandardMaterial color="white" />
             </mesh>
-            <mesh position={[0, -3.9, 0]}>
-                <boxGeometry args={[3, 0.1, 0.1, 32]} attach="geometry" />
-                <meshStandardMaterial color="red" />
+            <mesh position={[0.8, -2.8, 0]} rotation={[0,0,90]}>
+                <boxGeometry args={[2, 1, 0.1, 32]} attach="geometry" />
+                <meshStandardMaterial color="gray" />
             </mesh>
-            <mesh position={[0, -3.9, 0]}>
-                <boxGeometry args={[0.1, 0.1, 3, 32]} attach="geometry" />
-                <meshStandardMaterial color="red" />
+            <mesh position={[-0.8, -2.8, 0]} rotation={[0,0,-90]}>
+                <boxGeometry args={[2, 1, 0.1, 32]} attach="geometry" />
+                <meshStandardMaterial color="gray" />
+            </mesh>
+            <mesh position={[0, -2.8, 0.8]} rotation={[-90,0,0]}>
+                <boxGeometry args={[0.1, 1, 2, 32]} attach="geometry" />
+                <meshStandardMaterial color="gray" />
+            </mesh>
+            <mesh position={[0, -2.8, -0.8]} rotation={[90,0,0]}>
+                <boxGeometry args={[0, 1, 2, 32]} attach="geometry" />
+                <meshStandardMaterial color="gray" />
             </mesh>
         </group>
     );
