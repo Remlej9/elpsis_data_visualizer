@@ -1,9 +1,11 @@
-import React, { useRef, useEffect, useMemo } from 'react';
-import { useFrame, useLoader } from '@react-three/fiber';
+import React, { useRef, useEffect, useMemo, useState } from 'react';
+import { useFrame, useLoader, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 
 const RotatingObject = ({ rotationValues }) => {
     const groupRef = useRef();
+    const [textTexture, setTextTexture] = useState(null);
+    const { gl } = useThree(); // Access renderer for anisotropy
 
     useFrame(() => {
         const [x, y, z] = rotationValues;
@@ -12,36 +14,54 @@ const RotatingObject = ({ rotationValues }) => {
         }
     });
 
-    const textTexture = useMemo(() => {
-        const canvas = document.createElement('canvas');
-        canvas.width = 512;
-        canvas.height = 512;
-        const context = canvas.getContext('2d');
+    useEffect(() => {
+    const canvas = document.createElement('canvas');
+    canvas.width = 2048; // Increased canvas size
+    canvas.height = 2048;
+    const context = canvas.getContext('2d');
 
-        // Draw background
-        context.fillStyle = '#ffffff';
-        context.fillRect(0, 0, canvas.width, canvas.height);
+    // Draw background
+    context.fillStyle = '#ffffff';
+    context.fillRect(0, 0, canvas.width, canvas.height);
 
-        // Rotate the canvas context
-        context.translate(canvas.width / 2.25, canvas.height * 0.7);
-        context.rotate(-Math.PI / 2); // Rotate 90 degrees counterclockwise
+    const image = new Image();
+    image.src = '/mutikas.png';
+    image.onload = () => {
+        // Draw image centered on the canvas
+        context.save();
+        context.drawImage(image, 500, 500, 512, 512);
+        context.restore();
 
         // Draw text
         context.fillStyle = '#000000';
-        context.font = 'bold 64px Arial';
-        context.textAlign = 'right';
-        context.textBaseline = 'bottom';
+        context.font = 'bold 256px Arial'; // Adjusted font size
+        context.textAlign = 'center';
+        context.textBaseline = 'middle';
+        context.rotate(-Math.PI / 2);
+        context.translate(-canvas.height, canvas.width / 2.7);
         context.fillText('MYTIKAS', canvas.width / 2, canvas.height / 2);
 
         // Create texture
         const texture = new THREE.CanvasTexture(canvas);
-        
         texture.needsUpdate = true;
         texture.wrapS = THREE.RepeatWrapping;
         texture.wrapT = THREE.RepeatWrapping;
-        texture.repeat.set(1,1);
-        return texture;
-    }, []);
+        texture.repeat.set(1, 1);
+
+        // Improve texture filtering
+        texture.minFilter = THREE.LinearFilter;
+        texture.magFilter = THREE.LinearFilter;
+        texture.generateMipmaps = false;
+
+        // Apply anisotropy
+        const maxAnisotropy = gl.capabilities.getMaxAnisotropy();
+        texture.anisotropy = maxAnisotropy;
+
+        setTextTexture(texture);
+
+        document.body.appendChild(canvas);
+    };
+  }, [gl]);
 
     return (
         <group ref={groupRef}>
@@ -51,7 +71,7 @@ const RotatingObject = ({ rotationValues }) => {
             </mesh>
             <mesh position={[0, -1.5, 0]}>
                 <cylinderGeometry args={[0.9, 0.9, 5, 64, 1, true]} />
-                <meshStandardMaterial map={textTexture} />
+                {textTexture && <meshStandardMaterial map={textTexture} />}
             </mesh>
             <mesh position={[0, -4, 0]}>
                 <cylinderGeometry args={[0.9, 0.9, 0.1, 64, 1, false]} />

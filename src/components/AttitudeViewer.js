@@ -37,8 +37,8 @@ const AttitudeViewer = () => {
     });
     const [rotationData, setRotationData] = useState([0, 0, 0]);
     const [connection, setConnection] = useState(null);
+    const [reconnect, setReconnect] = useState(false);
 
-    // This effect is called whenever the current frame or the isPlaying state changes
     useEffect(() => {
         const ws = new WebSocket("ws://localhost:8080");
 
@@ -60,8 +60,8 @@ const AttitudeViewer = () => {
 
         return () => {
             ws.close();
-        }
-    }, []);
+        };
+    }, [reconnect]);
 
     const handleGraphButtonClick = (type) => {
         setGraphStates((prev) => {
@@ -81,10 +81,8 @@ const AttitudeViewer = () => {
                 <ambientLight intensity={Math.PI / 2}/>
                 <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} decay={0} intensity={Math.PI} />
                 <pointLight position={[-10, -10, -10]} decay={0} intensity={Math.PI} />
-                <RotatingObject rotationValues={rotationData ? rotationData : [0, 0, 0]} />                {/*<XYZArrows />*/}
+                <RotatingObject rotationValues={rotationData ? rotationData : [0, 0, 0]} />
                 <OrbitControls />
-                {/*<arrowHelper args={[new Vector3(0, -1, 0), new Vector3(0,
-                 0, 0), 7, 'red']} />*/}
             </Canvas>
 
             <div className="RotationValues">
@@ -92,19 +90,6 @@ const AttitudeViewer = () => {
                 <p>Y: {rotationData[1] * (180/Math.PI)}°</p>
                 <p>Z: {rotationData[2] * (180/Math.PI)}°</p>
             </div>
-            {/*
-            <div className="graphButtons">
-                <button className={graphStates.accelerationGraph ? "graphButton active" : "graphButton"} onClick={graphStates.accelerationGraph ? () => handleCloseGraph("acceleration") : () => handleGraphButtonClick("acceleration")}>
-                    Acceleration
-                </button>
-                <button className={graphStates.velocityGraph ? "graphButton active" : "graphButton"} onClick={graphStates.velocityGraph ? () => handleCloseGraph("velocity") : () => handleGraphButtonClick("velocity")}>
-                    Velocity
-                </button>
-                <button className={graphStates.altitudeGraph ? "graphButton active" : "graphButton"} onClick={graphStates.altitudeGraph ? () => handleCloseGraph("altitude") : () => handleGraphButtonClick("altitude")}>
-                    Altitude
-                </button>
-            </div>
-            */}
 
             {graphStates.accelerationGraph && (
                 <GraphPopup type="acceleration" frame={currentFrame} onClose={() => handleCloseGraph("acceleration")} />
@@ -118,6 +103,7 @@ const AttitudeViewer = () => {
 
             <div className="WebsocketConnection">
                 <p className={connection ? "WSConnected" : "WSDisconnected"}>Connection status: {connection ? "Connected" : "Disconnected"}</p>
+                { !connection && <button onClick={() => setReconnect(!reconnect)}>Reconnect</button>}
             </div>
 
         </div>
