@@ -4,7 +4,6 @@ import * as THREE from 'three';
 
 const RotatingObject = ({ rotationValues }) => {
     const groupRef = useRef();
-    const cylinderRef = useRef();
 
     useFrame(() => {
         const [x, y, z] = rotationValues;
@@ -24,19 +23,15 @@ const RotatingObject = ({ rotationValues }) => {
         context.fillRect(0, 0, canvas.width, canvas.height);
 
         // Rotate the canvas context
-        context.save();
-        context.translate(canvas.width / 2, canvas.height / 2);
+        context.translate(canvas.width / 2.25, canvas.height * 0.7);
         context.rotate(-Math.PI / 2); // Rotate 90 degrees counterclockwise
 
         // Draw text
         context.fillStyle = '#000000';
         context.font = 'bold 64px Arial';
-        context.textAlign = 'center';
-        context.textBaseline = 'middle';
+        context.textAlign = 'right';
+        context.textBaseline = 'bottom';
         context.fillText('MYTIKAS', canvas.width / 2, canvas.height / 2);
-
-        // Restore the canvas context
-        context.restore();
 
         // Create texture
         const texture = new THREE.CanvasTexture(canvas);
@@ -46,24 +41,6 @@ const RotatingObject = ({ rotationValues }) => {
         texture.wrapT = THREE.RepeatWrapping;
         texture.repeat.set(1,1);
         return texture;
-    }, []);
-
-    useEffect(() => {
-    if (cylinderRef.current) {
-      const geometry = cylinderRef.current.geometry;
-      const uvAttribute = geometry.attributes.uv;
-      const uvs = uvAttribute.array;
-
-      // Swap u and v coordinates
-      for (let i = 0; i < uvs.length; i += 2) {
-        const u = uvs[i];
-        const v = uvs[i + 1];
-        uvs[i] = v;
-        uvs[i + 1] = u;
-      }
-
-      uvAttribute.needsUpdate = true;
-    }
     }, []);
 
     return (
