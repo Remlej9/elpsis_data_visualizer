@@ -53,6 +53,10 @@ const RotatingObject = ({ rotationValues }) => {
                 <cylinderGeometry args={[0.9, 0.9, 5, 64, 1, true]} />
                 <meshStandardMaterial map={textTexture} />
             </mesh>
+            <mesh position={[0, -4, 0]}>
+                <cylinderGeometry args={[0.9, 0.9, 0.1, 64, 1, false]} />
+                <meshStandardMaterial color="white" />
+            </mesh>
 
             <mesh position={[0.8, -2.8, 0]} rotation={[0,0,90]}>
                 <boxGeometry args={[2, 1, 0.1, 32]} attach="geometry" />
