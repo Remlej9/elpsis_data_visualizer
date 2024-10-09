@@ -16,31 +16,6 @@
     z-index: 1; /* Ensure the arrows are on top of the canvas */
 }
 
-.controls {
-    position: absolute;
-    bottom: 10px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-    margin: 0 auto;
-}
-
-.timeline {
-    display: flex;
-    align-items: center;
-    width: 70%;
-}
-
-.playButton {
-    margin: 0 10px;
-    padding: 10px 50px 10px 50px;
-}
-
-input {
-    flex: 1;
-}
-
 .frameNumber {
     width: 70%;
     color: white;
@@ -80,23 +55,17 @@ input {
     border: 1px solid green !important;
 }
 
-.file-input {
+.WebsocketConnection {
     position: absolute;
     bottom: 10px;
-    left: 10px;
-    z-index: 1000;
 }
 
-.file-input-button {
-    border: 1px solid red;
-    display: inline-block;
-    padding: 6px 12px;
-    cursor: pointer;
-    background-color: rgba(0, 0, 0, 0);
-    border-radius: 10px;
+.WebsocketConnection p {
+    margin: 0;
+    padding: 0;
     color: red;
 }
 
-input[type="file"] {
-    display: none;
+.WSConnected {
+    color: green !important;
 }

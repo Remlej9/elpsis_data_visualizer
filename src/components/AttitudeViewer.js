@@ -5,7 +5,6 @@ import {OrbitControls} from "@react-three/drei";
 import RotatingObject from "./RotatingObject";
 import rotationData from "../data/rotationData";
 import GraphPopup from "./GraphPopup";
-import FileInput from "./FileInput";
 
 extend({ OrbitControls });
 
@@ -14,6 +13,7 @@ function frameToTime(frame) {
     let seconds = frame / 10;
 
     let minutes = Math.floor(seconds / 60);
+
 
     let milliseconds = frame % 10 * 100;
 
@@ -36,39 +36,31 @@ const AttitudeViewer = () => {
         altitudeGraph: false,
     });
     const [rotationData, setRotationData] = useState([0, 0, 0]);
-
-    const handleFileRead = (data) => {
-        setRotationData(data);
-    }
+    const [connection, setConnection] = useState(null);
 
     // This effect is called whenever the current frame or the isPlaying state changes
     useEffect(() => {
-        console.log(graphStates);
-        let animationTimeout;
+        const ws = new WebSocket("ws://localhost:8080");
 
-        // This function is called recursively to play the animation
-        const playAnimation = () => {
-            setCurrentFrame((prevFrame) => (prevFrame + 1) % rotationData.length);
-            animationTimeout = setTimeout(playAnimation, 100); // Set a delay of 100 milliseconds (1 second)
+        ws.onopen = () => {
+            console.log("Connected to server");
+            setConnection(true);
         };
 
-        if (isPlaying) {
-            animationTimeout = setTimeout(playAnimation, 100); // Start the animation with a delay
+        ws.onmessage = (message) => {
+            const data = JSON.parse(message.data);
+            console.log(data);
+            setRotationData(data);
+        };
+
+        ws.onclose = () => {
+            console.log("Connection closed");
+        };
+
+        return () => {
+            ws.close();
         }
-
-        // This function is called when the component is unmounted
-        return () => clearTimeout(animationTimeout);
-    }, [isPlaying, rotationData, graphStates]);
-
-    // This function is called when the play/pause button is clicked
-    const handlePlayClick = () => {
-        setIsPlaying((prevIsPlaying) => !prevIsPlaying);
-    };
-
-    // This function is called when the slider is moved
-    const handleSliderChange = (event) => {
-        setCurrentFrame(parseInt(event.target.value, 10));
-    };
+    }, []);
 
     const handleGraphButtonClick = (type) => {
         setGraphStates((prev) => {
@@ -88,40 +80,18 @@ const AttitudeViewer = () => {
                 <ambientLight intensity={Math.PI / 2}/>
                 <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} decay={0} intensity={Math.PI} />
                 <pointLight position={[-10, -10, -10]} decay={0} intensity={Math.PI} />
-                <RotatingObject rotationValues={Array.isArray(rotationData[currentFrame]) ? rotationData[currentFrame] : [0, 0, 0]} />                {/*<XYZArrows />*/}
+                <RotatingObject rotationValues={rotationData ? rotationData : [0, 0, 0]} />                {/*<XYZArrows />*/}
                 <OrbitControls />
                 {/*<arrowHelper args={[new Vector3(0, -1, 0), new Vector3(0,
                  0, 0), 7, 'red']} />*/}
             </Canvas>
 
-            <div className="controls">
-                <button
-                    className="playButton"
-                    onClick={handlePlayClick}>{isPlaying ? 'Pause' : 'Play'}
-                </button>
-
-                <span className="frameNumber">T- {frameToTime(currentFrame)}</span>
-
-                <div className="timeline">
-                    <input
-                        type="range"
-                        min="0"
-                        max={rotationData.length - 1}
-                        value={currentFrame}
-                        onChange={handleSliderChange}
-                    />
-                </div>
-
-                <FileInput onFileRead={handleFileRead}/>
-
-            </div>
-
             <div className="RotationValues">
 
             <p>Rotation i xyz</p>
-            <p>X: {rotationData[currentFrame][0] * (180/Math.PI)}°</p>
-            <p>Y: {rotationData[currentFrame][1] * (180/Math.PI)}°</p>
-            <p>Z: {rotationData[currentFrame][2] * (180/Math.PI)}°</p>
+            <p>X: {rotationData[0] * (180/Math.PI)}°</p>
+            <p>Y: {rotationData[1] * (180/Math.PI)}°</p>
+            <p>Z: {rotationData[2] * (180/Math.PI)}°</p>
                 <p>Frame : {currentFrame}</p>
 
             </div>
@@ -147,6 +117,10 @@ const AttitudeViewer = () => {
             {graphStates.altitudeGraph && (
                 <GraphPopup type="altitude" frame={currentFrame} onClose={() => handleCloseGraph("altitude")} />
             )}
+
+            <div className="WebsocketConnection">
+                <p className={connection ? "WSConnected" : "WSDisconnected"}>Connection status: {connection ? "Connected" : "Disconnected"}</p>
+            </div>
 
         </div>
     );
