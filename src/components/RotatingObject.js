@@ -59,7 +59,8 @@ const RotatingObject = ({ rotationValues }) => {
 
         setTextTexture(texture);
 
-        document.body.appendChild(canvas);
+        // Uncomment to see the canvas
+        //document.body.appendChild(canvas);
     };
   }, [gl]);
 
