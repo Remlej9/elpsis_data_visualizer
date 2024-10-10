@@ -3,38 +3,11 @@ import {Canvas, extend } from 'react-three-fiber';
 import '../css/AttitudeViewer.css';
 import {OrbitControls} from "@react-three/drei";
 import RotatingObject from "./RotatingObject";
-import rotationData from "../data/rotationData";
-import GraphPopup from "./GraphPopup";
 
 extend({ OrbitControls });
 
-// This function converts a frame number to a time string
-function frameToTime(frame) {
-    let seconds = frame / 10;
-
-    let minutes = Math.floor(seconds / 60);
-
-
-    let milliseconds = frame % 10 * 100;
-
-    seconds = Math.floor(seconds % 60);
-
-    // Pad the minutes, seconds, and milliseconds with leading zeros if needed
-    // The format becomes MM:SS:MMM
-    return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}:${milliseconds.toString().padStart(3, '0')}`;
-}
-
 const AttitudeViewer = () => {
 
-    // The current frame and whether the animation is playing or not
-    // is stored in the state
-    const [currentFrame, setCurrentFrame] = useState(0);
-    const [isPlaying, setIsPlaying] = useState(false);
-    const [graphStates, setGraphStates] = useState({
-        accelerationGraph: false,
-        velocityGraph: false,
-        altitudeGraph: false,
-    });
     const [rotationData, setRotationData] = useState([0, 0, 0]);
     const [connection, setConnection] = useState(null);
     const [reconnect, setReconnect] = useState(false);
@@ -63,17 +36,6 @@ const AttitudeViewer = () => {
         };
     }, [reconnect]);
 
-    const handleGraphButtonClick = (type) => {
-        setGraphStates((prev) => {
-            return {...prev, [`${type}Graph`]: true};
-        });
-    };
-
-    const handleCloseGraph = (type) => {
-        setGraphStates((prev) => ({ ...prev, [`${type}Graph`]: false }));
-    };
-
-
     // The main component renders the canvas, the play/pause button, the slider, and the frame number
     return (
         <div className="mainDiv">
@@ -90,16 +52,6 @@ const AttitudeViewer = () => {
                 <p>Y: {rotationData[1] * (180/Math.PI)}°</p>
                 <p>Z: {rotationData[2] * (180/Math.PI)}°</p>
             </div>
-
-            {graphStates.accelerationGraph && (
-                <GraphPopup type="acceleration" frame={currentFrame} onClose={() => handleCloseGraph("acceleration")} />
-            )}
-            {graphStates.velocityGraph && (
-                <GraphPopup type="velocity" frame={currentFrame} onClose={() => handleCloseGraph("velocity")} />
-            )}
-            {graphStates.altitudeGraph && (
-                <GraphPopup type="altitude" frame={currentFrame} onClose={() => handleCloseGraph("altitude")} />
-            )}
 
             <div className="WebsocketConnection">
                 <p className={connection ? "WSConnected" : "WSDisconnected"}>Connection status: {connection ? "Connected" : "Disconnected"}</p>

@@ -1,5 +1,5 @@
-import React, { useRef, useEffect, useMemo, useState } from 'react';
-import { useFrame, useLoader, useThree } from '@react-three/fiber';
+import React, { useRef, useEffect, useState } from 'react';
+import { useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 
 const RotatingObject = ({ rotationValues }) => {
