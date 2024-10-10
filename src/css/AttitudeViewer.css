@@ -86,3 +86,28 @@
 .WSConnected {
     color: green !important;
 }
+
+.ModelSelector {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    display: flex;
+    flex-direction: row;
+    background: none;
+}
+
+.ModelSelector button {
+    margin: 0 5px;
+    padding: 5px 10px;
+    background-color: rgba(0, 0, 0, 0);
+    border-radius: 10px;
+    color: red;
+    border: 1px solid red;
+}
+
+.ModelSelector button:hover {
+    color: rgba(255, 0, 0, 0.5);
+    border: 1px solid rgba(255, 0, 0, 0.5);
+    cursor: pointer;
+}
+

@@ -3,6 +3,7 @@ import {Canvas, extend } from 'react-three-fiber';
 import '../css/AttitudeViewer.css';
 import {OrbitControls} from "@react-three/drei";
 import RotatingObject from "./RotatingObject";
+import ElpisIIB from "./ElpisIIB";
 
 extend({ OrbitControls });
 
@@ -11,6 +12,7 @@ const AttitudeViewer = () => {
     const [rotationData, setRotationData] = useState([0, 0, 0]);
     const [connection, setConnection] = useState(null);
     const [reconnect, setReconnect] = useState(false);
+    const [model, setModel] = useState(null);
 
     useEffect(() => {
         const ws = new WebSocket("ws://localhost:8080");
@@ -43,7 +45,12 @@ const AttitudeViewer = () => {
                 <ambientLight intensity={Math.PI / 2}/>
                 <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} decay={0} intensity={Math.PI} />
                 <pointLight position={[-10, -10, -10]} decay={0} intensity={Math.PI} />
+                {
+                model ?
                 <RotatingObject rotationValues={rotationData ? rotationData : [0, 0, 0]} />
+                :
+                <ElpisIIB rotationValues={rotationData ? rotationData : [0, 0, 0]} />
+                }
                 <OrbitControls />
             </Canvas>
 
@@ -53,6 +60,10 @@ const AttitudeViewer = () => {
                 <p>Z: {rotationData[2] * (180/Math.PI)}°</p>
             </div>
 
+            <div className="ModelSelector">
+                <button onClick={() => setModel(!model)}>Toggle Model</button>
+            </div>
+            
             <div className="WebsocketConnection">
                 <p className={connection ? "WSConnected" : "WSDisconnected"}>Connection status: {connection ? "Connected" : "Disconnected"}</p>
                 { !connection && <button onClick={() => setReconnect(!reconnect)}>Reconnect</button>}
