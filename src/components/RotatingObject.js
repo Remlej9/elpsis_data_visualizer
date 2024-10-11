@@ -1,8 +1,8 @@
-import React, { useRef, useEffect, useMemo, useState } from 'react';
-import { useFrame, useLoader, useThree } from '@react-three/fiber';
+import React, { useRef, useEffect, useState } from 'react';
+import { useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 
-const RotatingObject = ({ rotationValues }) => {
+const RotatingObject = ({ rotationValues, onLoad }) => {
     const groupRef = useRef();
     const [textTexture, setTextTexture] = useState(null);
     const { gl } = useThree(); // Access renderer for anisotropy
@@ -59,9 +59,12 @@ const RotatingObject = ({ rotationValues }) => {
 
         setTextTexture(texture);
 
-        document.body.appendChild(canvas);
+        // Uncomment to see the canvas
+        //document.body.appendChild(canvas);
+
+        onLoad();
     };
-  }, [gl]);
+  }, [gl, onLoad]);
 
     return (
         <group ref={groupRef}>

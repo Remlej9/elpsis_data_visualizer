@@ -6,6 +6,7 @@ import RotatingObject from "./RotatingObject";
 import rotationData from "../data/rotationData";
 import GraphPopup from "./GraphPopup";
 import FileInput from "./FileInput";
+import ElpisIIB from "./ElpisIIB";
 
 extend({ OrbitControls });
 
@@ -26,6 +27,10 @@ function frameToTime(frame) {
 
 const AttitudeViewer = () => {
 
+    const handleModelLoad = () => {
+        setLoading(false);
+    }
+
     // The current frame and whether the animation is playing or not
     // is stored in the state
     const [currentFrame, setCurrentFrame] = useState(0);
@@ -36,6 +41,8 @@ const AttitudeViewer = () => {
         altitudeGraph: false,
     });
     const [rotationData, setRotationData] = useState([0, 0, 0]);
+    const [loading, setLoading] = useState(true);
+    const [model, setModel] = useState(null);
 
     const handleFileRead = (data) => {
         setRotationData(data);
@@ -80,7 +87,6 @@ const AttitudeViewer = () => {
         setGraphStates((prev) => ({ ...prev, [`${type}Graph`]: false }));
     };
 
-
     // The main component renders the canvas, the play/pause button, the slider, and the frame number
     return (
         <div className="mainDiv">
@@ -88,7 +94,13 @@ const AttitudeViewer = () => {
                 <ambientLight intensity={Math.PI / 2}/>
                 <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} decay={0} intensity={Math.PI} />
                 <pointLight position={[-10, -10, -10]} decay={0} intensity={Math.PI} />
-                <RotatingObject rotationValues={Array.isArray(rotationData[currentFrame]) ? rotationData[currentFrame] : [0, 0, 0]} />                {/*<XYZArrows />*/}
+                {
+                model ?
+                <RotatingObject rotationValues={rotationData ? rotationData : [0, 0, 0]} onLoad={handleModelLoad} />
+                :
+                <ElpisIIB rotationValues={rotationData ? rotationData : [0, 0, 0]} onLoad={handleModelLoad} />
+                }
+
                 <OrbitControls />
                 {/*<arrowHelper args={[new Vector3(0, -1, 0), new Vector3(0,
                  0, 0), 7, 'red']} />*/}
@@ -138,6 +150,10 @@ const AttitudeViewer = () => {
                 </button>
             </div>
 
+	    <div className="ModelSelector">
+                <button onClick={() => { setLoading(true); setModel(!model); }}>Toggle Model</button>
+        </div>
+
             {graphStates.accelerationGraph && (
                 <GraphPopup type="acceleration" frame={currentFrame} onClose={() => handleCloseGraph("acceleration")} />
             )}
@@ -148,6 +164,9 @@ const AttitudeViewer = () => {
                 <GraphPopup type="altitude" frame={currentFrame} onClose={() => handleCloseGraph("altitude")} />
             )}
 
+        <div className="Loading">
+                {loading && <p>Loading...</p>}
+        </div>
         </div>
     );
 };
