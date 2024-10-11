@@ -13,6 +13,7 @@ const AttitudeViewer = () => {
     const [connection, setConnection] = useState(null);
     const [reconnect, setReconnect] = useState(false);
     const [model, setModel] = useState(null);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const ws = new WebSocket("ws://localhost:8080");
@@ -38,6 +39,10 @@ const AttitudeViewer = () => {
         };
     }, [reconnect]);
 
+    const handleModelLoad = () => {
+        setLoading(false);
+    }
+
     // The main component renders the canvas, the play/pause button, the slider, and the frame number
     return (
         <div className="mainDiv">
@@ -47,9 +52,9 @@ const AttitudeViewer = () => {
                 <pointLight position={[-10, -10, -10]} decay={0} intensity={Math.PI} />
                 {
                 model ?
-                <RotatingObject rotationValues={rotationData ? rotationData : [0, 0, 0]} />
+                <RotatingObject rotationValues={rotationData ? rotationData : [0, 0, 0]} onLoad={handleModelLoad} />
                 :
-                <ElpisIIB rotationValues={rotationData ? rotationData : [0, 0, 0]} />
+                <ElpisIIB rotationValues={rotationData ? rotationData : [0, 0, 0]} onLoad={handleModelLoad} />
                 }
                 <OrbitControls />
             </Canvas>
@@ -61,12 +66,16 @@ const AttitudeViewer = () => {
             </div>
 
             <div className="ModelSelector">
-                <button onClick={() => setModel(!model)}>Toggle Model</button>
+                <button onClick={() => { setLoading(true); setModel(!model); }}>Toggle Model</button>
             </div>
             
             <div className="WebsocketConnection">
                 <p className={connection ? "WSConnected" : "WSDisconnected"}>Connection status: {connection ? "Connected" : "Disconnected"}</p>
                 { !connection && <button onClick={() => setReconnect(!reconnect)}>Reconnect</button>}
+            </div>
+
+            <div className="Loading">
+                {loading && <p>Loading...</p>}
             </div>
 
         </div>

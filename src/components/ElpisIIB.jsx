@@ -3,7 +3,7 @@ import { useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 
-const ElpisIIB = ({ rotationValues }) => {
+const ElpisIIB = ({ rotationValues, onLoad }) => {
     const groupRef = useRef();
     const [textTexture, setTextTexture] = useState(null);
     const [model, setModel] = useState(null);
@@ -70,13 +70,18 @@ const ElpisIIB = ({ rotationValues }) => {
         const loader = new GLTFLoader();
         loader.load('/Elpis 2.0b.gltf', (gltf) => {
             setModel(gltf.scene);
+            onLoad();
         });
 
-    }, []);
+    }, [onLoad]);
+
+    if (!model || !textTexture) {
+        return null;
+    }
 
     return (
         <group ref={groupRef}>
-            {model && <primitive object={model} />}
+            <primitive object={model} />
         </group>
     );
 };
